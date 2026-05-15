@@ -18,7 +18,7 @@ The plugin provides:
 - `rexd` installed on the remote host
 - Remote `rexd` configured with `security.allowed_roots`
 
-Recommended backend: `rexd` v0.1.4+ with `fs.edit`, `fs.patch`, and PTY support.
+Recommended backend: `rexd` v0.1.5+ with `fs.edit`, `fs.patch`, PTY support, and correct `/` allowed-root behavior.
 
 ## Install
 
@@ -143,6 +143,8 @@ Example:
   }
 }
 ```
+
+`capabilities.shell` controls whether the plugin exposes remote shell execution. Remote shell commands run with the privileges of the remote `rexd` process user and are not constrained by filesystem RPC root guards. Set `capabilities.shell: false` and `security.allow_shell = false` on the target host when filesystem roots must be the hard security boundary.
 
 Only `transport: "ssh"` is supported in v0.1.
 

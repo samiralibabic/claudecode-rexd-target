@@ -29,6 +29,11 @@ describe("paths", () => {
     expect(guardRemotePath(strictTarget, "/etc/passwd", [])).toContain("outside allowed roots")
   })
 
+  test("treats root workspace as allowing absolute descendants", () => {
+    const target: TargetConfig = { ...strictTarget, workspaceRoots: ["/"] }
+    expect(guardRemotePath(target, "/etc/hosts", [])).toBeNull()
+  })
+
   test("allow_within_server_roots lets rexd decide", () => {
     const target: TargetConfig = { ...strictTarget, rootPolicy: { mode: "allow_within_server_roots" } }
     expect(guardRemotePath(target, "/etc/passwd", [])).toBeNull()

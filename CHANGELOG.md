@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.1.3 - 2026-05-15
+
+- Add coverage confirming `/` workspace roots allow absolute descendants in the Claude Code adapter guard.
+- Update documentation and backend recommendation for `rexd v0.1.5`.
+- Document that remote shell execution is not constrained by filesystem RPC root guards.
+
 ## v0.1.2 - 2026-05-15
 
 - Add user-scope `/target` alias installation via `rexd-target-install-alias --user`.
