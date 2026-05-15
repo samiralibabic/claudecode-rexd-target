@@ -12,7 +12,7 @@ The plugin provides:
 ## Requirements
 
 - Claude Code with plugin support
-- Bun
+- Bun available in `PATH` for the bundled MCP server
 - SSH access to the remote target
 - `rexd` installed on the remote host
 - Remote `rexd` configured with `security.allowed_roots`
@@ -21,32 +21,75 @@ Recommended backend: `rexd` v0.1.4+ with `fs.edit`, `fs.patch`, and PTY support.
 
 ## Install
 
+Install the plugin normally through Claude Code's plugin marketplace system:
+
+```bash
+claude plugin marketplace add samiralibabic/claudecode-rexd-target
+claude plugin install claudecode-rexd-target@rexd-ecosystem --scope user
+```
+
+After that, start Claude Code normally from any project:
+
+```bash
+claude
+```
+
+Inside Claude Code, verify the plugin MCP server is connected:
+
+```text
+/mcp
+```
+
+The plugin MCP server is configured in `.mcp.json` and starts the bundled server with:
+
+```bash
+bun ${CLAUDE_PLUGIN_ROOT}/dist/server.js
+```
+
+### Development Install
+
+For local development without installing the marketplace:
+
 ```bash
 bun install
+claude --plugin-dir /path/to/claudecode-rexd-target --debug
 ```
 
-Run Claude Code with this plugin directory:
+Run this command from the project you want Claude to work in, not from inside this plugin repo. If you run Claude from inside this plugin repo, Claude may read this repo's `.mcp.json` as project MCP config and warn that plugin-only variables are missing.
 
-```bash
-claude --plugin-dir ./rexd-ecosystem/claudecode-rexd-target --debug
+### Optional /target Alias
+
+Claude Code namespaces plugin commands, so the bundled target command is `/claudecode-rexd-target:target`.
+
+For better day-to-day UX, install a project-local `/target` alias in the project where you run Claude Code:
+
+```text
+/claudecode-rexd-target:install-target-alias .
 ```
 
-If your shell is already inside `rexd-ecosystem/`, use `claude --plugin-dir ./claudecode-rexd-target --debug`.
-
-The plugin MCP server is configured in `.mcp.json` and starts with:
-
-```bash
-bun run ${CLAUDE_PLUGIN_ROOT}/src/server.ts
-```
-
-Claude Code namespaces plugin commands, so the bundled command is `/claudecode-rexd-target:target`. For better day-to-day UX, install the project-local `/target` alias in the project where you run Claude Code:
+If you have a local checkout of this repo, you can also run:
 
 ```bash
 cd /path/to/claudecode-rexd-target
 bun run install:target-alias /path/to/your/project
 ```
 
-The installer writes `/path/to/your/project/.claude/commands/target.md`.
+Both methods write:
+
+```text
+<project>/.claude/commands/target.md
+```
+
+Restart Claude Code if `/target` is not visible immediately.
+
+### Updates
+
+Update the marketplace and installed plugin with:
+
+```bash
+claude plugin marketplace update rexd-ecosystem
+claude plugin update claudecode-rexd-target@rexd-ecosystem
+```
 
 ## Target Registry
 
@@ -91,7 +134,7 @@ Only `transport: "ssh"` is supported in v0.1.
 
 ## Usage
 
-Recommended short command after installing the alias:
+Recommended short command after installing the optional alias:
 
 ```text
 /target list

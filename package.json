@@ -4,11 +4,16 @@
   "description": "Claude Code plugin for using REXD targets over SSH stdio",
   "type": "module",
   "main": "dist/server.js",
+  "bin": {
+    "rexd-target-install-alias": "./bin/rexd-target-install-alias"
+  },
   "files": [
     ".claude-plugin/plugin.json",
+    ".claude-plugin/marketplace.json",
     ".mcp.json",
-    "commands/target.md",
+    "commands",
     "aliases/target.md",
+    "bin/rexd-target-install-alias",
     "hooks/hooks.json",
     "scripts/guard-local-tools.mjs",
     "scripts/install-target-alias.mjs",

@@ -1,0 +1,21 @@
+{
+  "name": "rexd-ecosystem",
+  "owner": {
+    "name": "Samir Alibabic"
+  },
+  "description": "Claude Code plugins for REXD remote targets",
+  "plugins": [
+    {
+      "name": "claudecode-rexd-target",
+      "source": "./",
+      "description": "Use REXD targets from Claude Code over SSH stdio",
+      "author": {
+        "name": "Samir Alibabic"
+      },
+      "repository": "https://github.com/samiralibabic/claudecode-rexd-target",
+      "license": "MIT",
+      "category": "remote-development",
+      "tags": ["claude-code", "mcp", "rexd", "ssh", "remote-development"]
+    }
+  ]
+}

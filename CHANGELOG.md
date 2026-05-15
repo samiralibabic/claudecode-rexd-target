@@ -8,3 +8,5 @@
 - Add remote filesystem, search, exec, and PTY tools.
 - Add `PreToolUse` hook to block local built-ins while a target is active.
 - Add installable project-local `/target` alias for shorter Claude Code UX.
+- Add marketplace metadata for normal Claude Code plugin installation.
+- Run the MCP server from the bundled `dist/server.js` for installable plugin cache compatibility.

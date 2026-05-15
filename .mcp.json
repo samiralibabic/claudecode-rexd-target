@@ -2,7 +2,7 @@
   "mcpServers": {
     "rexd-target": {
       "command": "bun",
-      "args": ["run", "${CLAUDE_PLUGIN_ROOT}/src/server.ts"],
+      "args": ["${CLAUDE_PLUGIN_ROOT}/dist/server.js"],
       "cwd": "${CLAUDE_PLUGIN_ROOT}",
       "env": {
         "REXD_TARGETS_FILE": "~/.config/rexd/targets.json",

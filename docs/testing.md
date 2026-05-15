@@ -11,7 +11,15 @@ bun run build
 
 ## Claude Code Smoke Test
 
-Run Claude Code with the plugin loaded:
+Normal install smoke test:
+
+```bash
+claude plugin marketplace add samiralibabic/claudecode-rexd-target
+claude plugin install claudecode-rexd-target@rexd-ecosystem --scope user
+claude
+```
+
+Development smoke test:
 
 ```bash
 claude --plugin-dir /path/to/claudecode-rexd-target --debug
@@ -27,6 +35,12 @@ Inside Claude Code:
 ```
 
 Optional short command setup:
+
+```text
+/claudecode-rexd-target:install-target-alias .
+```
+
+Or from a local checkout:
 
 ```bash
 bun run install:target-alias /path/to/your/project
