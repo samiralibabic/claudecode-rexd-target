@@ -63,16 +63,11 @@ Claude Code namespaces plugin commands, so the bundled target command is `/claud
 
 For better day-to-day UX, install a project-local `/target` alias in the project where you run Claude Code:
 
-```text
-/claudecode-rexd-target:install-target-alias .
-```
-
-If you have a local checkout of this repo, you can also run:
-
 ```bash
-cd /path/to/claudecode-rexd-target
-bun run install:target-alias /path/to/your/project
+rexd-target-install-alias /path/to/your/project
 ```
+
+If you have a local checkout of this repo, you can also run `bun run install:target-alias /path/to/your/project` from the plugin checkout.
 
 Both methods write:
 

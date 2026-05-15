@@ -36,15 +36,11 @@ Inside Claude Code:
 
 Optional short command setup:
 
-```text
-/claudecode-rexd-target:install-target-alias .
-```
-
-Or from a local checkout:
-
 ```bash
-bun run install:target-alias /path/to/your/project
+rexd-target-install-alias /path/to/your/project
 ```
+
+From a local checkout, `bun run install:target-alias /path/to/your/project` is also available.
 
 Then use:
 
