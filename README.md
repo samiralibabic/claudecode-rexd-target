@@ -41,7 +41,7 @@ Inside Claude Code, verify the plugin MCP server is connected:
 /mcp
 ```
 
-The plugin MCP server is configured in `.mcp.json` and starts the bundled server with:
+The plugin MCP server is configured by the `.mcp.json` committed in this repository. That file is part of the plugin package and should stay in git. When installed through Claude Code, it starts the bundled server with:
 
 ```bash
 node ${CLAUDE_PLUGIN_ROOT}/dist/server.js
@@ -58,19 +58,35 @@ claude --plugin-dir /path/to/claudecode-rexd-target --debug
 
 Run this command from the project you want Claude to work in, not from inside this plugin repo. If you run Claude from inside this plugin repo, Claude may read this repo's `.mcp.json` as project MCP config and warn that plugin-only variables are missing.
 
-### Optional /target Alias
+### Optional Global /target Alias
 
 Claude Code namespaces plugin commands, so the bundled target command is `/claudecode-rexd-target:target`.
 
-For better day-to-day UX, install a project-local `/target` alias in the project where you run Claude Code:
+For better day-to-day UX, install `/target` as a personal skill available in every project. In a Claude Code session with this plugin enabled, run this before activating a target:
+
+```text
+! rexd-target-install-alias --user
+```
+
+This writes:
+
+```text
+~/.claude/skills/target/SKILL.md
+```
+
+If the helper is not on PATH, run it from a local checkout instead:
+
+```bash
+bun run install:target-alias --user
+```
+
+You can still install a project-local alias instead:
 
 ```bash
 rexd-target-install-alias /path/to/your/project
 ```
 
-If you have a local checkout of this repo, you can also run `bun run install:target-alias /path/to/your/project` from the plugin checkout.
-
-Both methods write:
+Project-local aliases write:
 
 ```text
 <project>/.claude/commands/target.md
@@ -89,11 +105,13 @@ claude plugin update claudecode-rexd-target@rexd-ecosystem
 
 ## Target Registry
 
-Targets are read from:
+Targets are read from the shared REXD registry:
 
 ```text
 ~/.config/rexd/targets.json
 ```
+
+This is intentionally the same registry used by other REXD integrations such as `opencode-rexd-target`, so one target config can be reused across tools.
 
 Example:
 
@@ -213,7 +231,7 @@ bun run build
 
 ## Troubleshooting
 
-If `/mcp` does not show `rexd-target`, run Claude Code with `--debug` and confirm Bun is available.
+If `/mcp` does not show `rexd-target`, run Claude Code with `--debug` and confirm Node.js is available.
 
 If `target_use` fails, check SSH access and that the remote command works manually:
 

@@ -37,10 +37,10 @@ Inside Claude Code:
 Optional short command setup:
 
 ```bash
-rexd-target-install-alias /path/to/your/project
+rexd-target-install-alias --user
 ```
 
-From a local checkout, `bun run install:target-alias /path/to/your/project` is also available.
+From a local checkout, `bun run install:target-alias --user` is also available. To install a project-local alias instead, pass the project path.
 
 Then use:
 

@@ -1,5 +1,6 @@
 ---
 description: Manage the active REXD target for remote Claude Code work
+disable-model-invocation: true
 ---
 
 Use the `rexd-target` MCP tools to manage the active remote target.

@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.1.2 - 2026-05-15
+
+- Add user-scope `/target` alias installation via `rexd-target-install-alias --user`.
+- Document that `.mcp.json` is packaged plugin config and that `~/.config/rexd/targets.json` is the shared REXD target registry.
+
 ## v0.1.1 - 2026-05-15
 
 - Switch installed plugin runtime from Bun source execution to bundled `dist/server.js` via Node.
