@@ -1,6 +1,13 @@
 # Changelog
 
-## v0.1.0 - Unreleased
+## v0.1.1 - 2026-05-15
+
+- Switch installed plugin runtime from Bun source execution to bundled `dist/server.js` via Node.
+- Switch the local-tool guard hook to Node so it does not depend on executable mode or Bun at runtime.
+- Remove the alias-installer slash command to reduce command list noise.
+- Keep `.claude/` local settings ignored and out of the repository.
+
+## v0.1.0 - 2026-05-15
 
 - Initial Claude Code plugin with `rexd-target` MCP server.
 - Add target list/use/status/clear tools backed by `~/.config/rexd/targets.json`.

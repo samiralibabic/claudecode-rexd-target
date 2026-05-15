@@ -12,7 +12,8 @@ The plugin provides:
 ## Requirements
 
 - Claude Code with plugin support
-- Bun available in `PATH` for the bundled MCP server
+- Node.js available in `PATH` for the installed MCP server and hook scripts
+- Bun for local development, tests, and building from source
 - SSH access to the remote target
 - `rexd` installed on the remote host
 - Remote `rexd` configured with `security.allowed_roots`
@@ -43,7 +44,7 @@ Inside Claude Code, verify the plugin MCP server is connected:
 The plugin MCP server is configured in `.mcp.json` and starts the bundled server with:
 
 ```bash
-bun ${CLAUDE_PLUGIN_ROOT}/dist/server.js
+node ${CLAUDE_PLUGIN_ROOT}/dist/server.js
 ```
 
 ### Development Install

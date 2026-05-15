@@ -20268,7 +20268,7 @@ function touchState(options = {}) {
 
 // src/version.ts
 var CLIENT_NAME = "claudecode-rexd-target";
-var CLIENT_VERSION = "0.1.0";
+var CLIENT_VERSION = "0.1.1";
 
 // src/connection-manager.ts
 var SESSION_OPEN_TIMEOUT_MS = 20000;
