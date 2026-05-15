@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/guard-local-tools.mjs"
+            "command": "bun \"${CLAUDE_PLUGIN_ROOT}/scripts/guard-local-tools.mjs\""
           }
         ]
       }

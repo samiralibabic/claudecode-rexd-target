@@ -56,6 +56,7 @@ export function registerPtyTools(server: McpServer, manager: ConnectionManager =
     async ({ ptyId, data }) =>
       safeTool(async () => {
         const { connection } = await manager.ensureActiveConnection()
+        connection.ptyManager.requireKnown(ptyId)
         const result = await connection.rpc.request<Record<string, unknown>>("pty.input", {
           session_id: connection.remoteSessionID,
           pty_id: ptyId,
@@ -102,6 +103,7 @@ export function registerPtyTools(server: McpServer, manager: ConnectionManager =
     async ({ ptyId, cols, rows }) =>
       safeTool(async () => {
         const { connection } = await manager.ensureActiveConnection()
+        connection.ptyManager.requireKnown(ptyId)
         const result = await connection.rpc.request<Record<string, unknown>>("pty.resize", {
           session_id: connection.remoteSessionID,
           pty_id: ptyId,
@@ -122,6 +124,7 @@ export function registerPtyTools(server: McpServer, manager: ConnectionManager =
     async ({ ptyId }) =>
       safeTool(async () => {
         const { connection } = await manager.ensureActiveConnection()
+        connection.ptyManager.requireKnown(ptyId)
         const result = await connection.rpc.request<Record<string, unknown>>("pty.close", {
           session_id: connection.remoteSessionID,
           pty_id: ptyId,

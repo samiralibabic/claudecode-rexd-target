@@ -27,27 +27,46 @@ function safeRealpath(value) {
   }
 }
 
-function resolveStatePath() {
+function usablePath(value) {
+  return typeof value === "string" && value.length > 0 && !value.includes("${") ? value : undefined
+}
+
+function payloadProjectRoot(input) {
+  return [
+    input?.project_cwd,
+    input?.projectCwd,
+    input?.project_dir,
+    input?.projectDir,
+    input?.workspace_root,
+    input?.workspaceRoot,
+    input?.cwd,
+  ].find(usablePath)
+}
+
+function resolveStatePath(input) {
   const projectEnv = [process.env.CLAUDE_REXD_PROJECT_DIR, process.env.CLAUDE_PROJECT_DIR].find(
-    (value) => value && !value.includes("${"),
+    usablePath,
   )
-  const projectRoot = path.resolve(projectEnv || process.cwd())
+  const projectRoot = path.resolve(projectEnv || payloadProjectRoot(input) || process.cwd())
   const projectKey = safeRealpath(projectRoot)
   const repoClaudeDir = path.resolve(projectRoot, ".claude")
   if (existsSync(repoClaudeDir)) return path.resolve(repoClaudeDir, "rexd-state.json")
   return path.resolve(homedir(), ".cache/claudecode-rexd-target/state", `${sha256(projectKey)}.json`)
 }
 
-function loadActiveAlias() {
-  const statePath = resolveStatePath()
-  if (!existsSync(statePath)) return null
+function loadState(input) {
+  const statePath = resolveStatePath(input)
+  if (!existsSync(statePath)) return { statePath, activeAlias: null, parseError: null }
   try {
     const parsed = JSON.parse(readFileSync(statePath, "utf8"))
-    return typeof parsed.activeTargetAlias === "string" && parsed.activeTargetAlias.length > 0
-      ? parsed.activeTargetAlias
-      : null
-  } catch {
-    return null
+    const activeAlias =
+      typeof parsed.activeTargetAlias === "string" && parsed.activeTargetAlias.length > 0
+        ? parsed.activeTargetAlias
+        : null
+    return { statePath, activeAlias, parseError: null }
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err)
+    return { statePath, activeAlias: null, parseError: message }
   }
 }
 
@@ -83,11 +102,13 @@ try {
   input = {}
 }
 
-const activeAlias = loadActiveAlias()
-if (!activeAlias) process.exit(0)
+const state = loadState(input)
+if (!state.activeAlias && !state.parseError) process.exit(0)
 
 const toolName = toolNameFromInput(input)
-const reason = `Local ${toolName} blocked because REXD target "${activeAlias}" is active. Use ${suggestionFor(toolName)} instead.`
+const reason = state.parseError
+  ? `Local ${toolName} blocked because REXD state file exists but could not be parsed at ${state.statePath}. Fix or remove the corrupt state file before using local tools. Parse error: ${state.parseError}`
+  : `Local ${toolName} blocked because REXD target "${state.activeAlias}" is active. Use ${suggestionFor(toolName)} instead.`
 
 process.stdout.write(
   `${JSON.stringify({

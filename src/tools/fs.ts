@@ -24,6 +24,28 @@ type FsReadResult = {
   truncated?: boolean
 }
 
+export const DEFAULT_READ_FILE_MAX_BYTES = 256 * 1024
+
+export function buildReadFileRpcParams(input: {
+  sessionId: string
+  path: string
+  encoding?: "utf8" | "base64"
+  offset?: number
+  limit?: number
+  maxBytes?: number
+}): Record<string, unknown> {
+  const encoding = input.encoding ?? "utf8"
+  const maxBytes = input.maxBytes ?? (encoding === "utf8" ? DEFAULT_READ_FILE_MAX_BYTES : undefined)
+  return {
+    session_id: input.sessionId,
+    path: input.path,
+    encoding,
+    ...(encoding === "base64" && input.offset ? { offset: input.offset } : {}),
+    ...(encoding === "base64" && input.limit && !input.maxBytes ? { length: input.limit } : {}),
+    ...(maxBytes ? { length: maxBytes } : {}),
+  }
+}
+
 function ensureFs(connection: Connection): void {
   requireCapability(connection.target.capabilities, "fs")
 }
@@ -50,23 +72,26 @@ export function registerFsTools(server: McpServer, manager: ConnectionManager = 
         path: z.string().min(1),
         offset: z.number().int().positive().optional(),
         limit: z.number().int().positive().optional(),
+        maxBytes: z.number().int().positive().optional(),
         encoding: z.enum(["utf8", "base64"]).optional(),
       },
     },
-    async ({ path, offset, limit, encoding }) =>
+    async ({ path, offset, limit, maxBytes, encoding }) =>
       safeTool(async () => {
         const { connection } = await manager.ensureActiveConnection()
         ensureFs(connection)
         const remotePath = resolveRemotePath(connection.cwd, path, connection.target)
         assertRemotePathAllowed(connection.target, remotePath, connection.workspaceRoots)
 
-        const result = await connection.rpc.request<FsReadResult>("fs.read", {
-          session_id: connection.remoteSessionID,
+        const params = buildReadFileRpcParams({
+          sessionId: connection.remoteSessionID,
           path: remotePath,
-          encoding: encoding ?? "utf8",
-          ...(encoding === "base64" && offset ? { offset } : {}),
-          ...(encoding === "base64" && limit ? { length: limit } : {}),
+          encoding,
+          offset,
+          limit,
+          maxBytes,
         })
+        const result = await connection.rpc.request<FsReadResult>("fs.read", params)
 
         const content = String(result.content ?? "")
         if (encoding === "base64") {
@@ -74,7 +99,17 @@ export function registerFsTools(server: McpServer, manager: ConnectionManager = 
         }
 
         const text = formatLineNumbered(content, offset ?? 1, limit)
-        return textResult(text, { ...result, content, lineNumberedContent: text, path: remotePath })
+        const readLimitBytes = Number(params.length ?? 0)
+        const suffix = result.truncated
+          ? `\n[truncated: read_file returned the first ${readLimitBytes} bytes; pass maxBytes to adjust the remote read limit]`
+          : ""
+        return textResult(`${text}${suffix}`, {
+          ...result,
+          content,
+          lineNumberedContent: text,
+          path: remotePath,
+          readLimitBytes,
+        })
       }),
   )
 

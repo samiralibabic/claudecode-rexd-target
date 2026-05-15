@@ -31,7 +31,17 @@ export class PtyManager {
     return state
   }
 
-  ensure(ptyId: string): PtyState {
+  has(ptyId: string): boolean {
+    return this.ptys.has(ptyId)
+  }
+
+  requireKnown(ptyId: string): PtyState {
+    const state = this.ptys.get(ptyId)
+    if (!state) throw new Error(`Unknown PTY id: ${ptyId}`)
+    return state
+  }
+
+  private ensureFromEvent(ptyId: string): PtyState {
     let state = this.ptys.get(ptyId)
     if (!state) state = this.markOpen(ptyId)
     return state
@@ -42,7 +52,7 @@ export class PtyManager {
       const ptyId = String(params.pty_id ?? "")
       if (!ptyId) return true
       const processId = typeof params.process_id === "string" ? params.process_id : undefined
-      const state = this.ensure(ptyId)
+      const state = this.ensureFromEvent(ptyId)
       if (processId) state.processId = processId
       this.append(ptyId, decodeEventData(params.data, params.encoding))
       return true
@@ -51,7 +61,7 @@ export class PtyManager {
     if (method === "pty.exit") {
       const ptyId = String(params.pty_id ?? "")
       if (!ptyId) return true
-      const state = this.ensure(ptyId)
+      const state = this.ensureFromEvent(ptyId)
       state.closed = true
       state.exitCode = typeof params.exit_code === "number" ? params.exit_code : null
       state.signal = typeof params.signal === "string" ? params.signal : null
@@ -63,7 +73,7 @@ export class PtyManager {
   }
 
   append(ptyId: string, data: string): void {
-    const state = this.ensure(ptyId)
+    const state = this.ensureFromEvent(ptyId)
     const result = appendCapped(state.buffer, data, this.maxBufferBytes)
     state.buffer = result.value
     state.bytesBuffered = result.bytes
@@ -72,7 +82,7 @@ export class PtyManager {
   }
 
   read(ptyId: string, maxBytes = 65536, drain = true): { output: string; state: PtyState } {
-    const state = this.ensure(ptyId)
+    const state = this.requireKnown(ptyId)
     let output = state.buffer
     let remaining = ""
 
@@ -96,7 +106,7 @@ export class PtyManager {
   }
 
   close(ptyId: string): void {
-    const state = this.ensure(ptyId)
+    const state = this.requireKnown(ptyId)
     state.closed = true
     state.updatedAt = Date.now()
   }
