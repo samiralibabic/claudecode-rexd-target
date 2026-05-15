@@ -1,6 +1,6 @@
 # claudecode-rexd-target
 
-Claude Code plugin for using configured REXD targets over SSH stdio.
+Claude Code plugin for using configured [REXD](https://github.com/samiralibabic/rexd) targets over SSH stdio.
 
 The plugin provides:
 
