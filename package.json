@@ -1,0 +1,56 @@
+{
+  "name": "@samiralibabic/claudecode-rexd-target",
+  "version": "0.1.0",
+  "description": "Claude Code plugin for using REXD targets over SSH stdio",
+  "type": "module",
+  "main": "dist/server.js",
+  "files": [
+    ".claude-plugin/plugin.json",
+    ".mcp.json",
+    "commands/target.md",
+    "aliases/target.md",
+    "hooks/hooks.json",
+    "scripts/guard-local-tools.mjs",
+    "scripts/install-target-alias.mjs",
+    "dist",
+    "src",
+    "README.md",
+    "CHANGELOG.md",
+    "CODE_OF_CONDUCT.md",
+    "CONTRIBUTING.md",
+    "SECURITY.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "start": "bun run src/server.ts",
+    "install:target-alias": "bun run scripts/install-target-alias.mjs",
+    "build": "bun build ./src/server.ts --outdir ./dist --target node --format esm",
+    "typecheck": "tsc --noEmit",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "latest",
+    "diff": "^8.0.3",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/diff": "latest",
+    "@types/node": "latest",
+    "typescript": "^5.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/samiralibabic/claudecode-rexd-target.git"
+  },
+  "keywords": [
+    "claude-code",
+    "claude-code-plugin",
+    "mcp",
+    "rexd",
+    "remote-execution",
+    "ssh"
+  ],
+  "author": "Samir Alibabic",
+  "license": "MIT"
+}
