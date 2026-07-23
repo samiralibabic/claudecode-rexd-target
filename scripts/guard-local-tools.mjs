@@ -59,6 +59,18 @@ function loadState(input) {
   if (!existsSync(statePath)) return { statePath, activeAlias: null, parseError: null }
   try {
     const parsed = JSON.parse(readFileSync(statePath, "utf8"))
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+      throw new Error("expected a state object")
+    }
+    if (!("activeTargetAlias" in parsed)) {
+      throw new Error("missing activeTargetAlias")
+    }
+    if (
+      parsed.activeTargetAlias !== null &&
+      (typeof parsed.activeTargetAlias !== "string" || parsed.activeTargetAlias.length === 0)
+    ) {
+      throw new Error("activeTargetAlias must be a non-empty string or null")
+    }
     const activeAlias =
       typeof parsed.activeTargetAlias === "string" && parsed.activeTargetAlias.length > 0
         ? parsed.activeTargetAlias
@@ -75,20 +87,27 @@ function toolNameFromInput(input) {
 }
 
 function suggestionFor(toolName) {
+  const prefix = "mcp__plugin_claudecode-rexd-target_rexd-target__"
   switch (toolName) {
     case "Bash":
-      return "mcp__rexd-target__exec or PTY tools"
+    case "PowerShell":
+      return `${prefix}exec or PTY tools`
     case "Read":
-      return "mcp__rexd-target__read_file"
+      return `${prefix}read_file`
     case "Write":
-      return "mcp__rexd-target__write_file"
+      return `${prefix}write_file`
     case "Edit":
     case "MultiEdit":
-      return "mcp__rexd-target__edit_file or mcp__rexd-target__apply_patch"
+    case "NotebookEdit":
+      return `${prefix}edit_file or ${prefix}apply_patch`
     case "Glob":
-      return "mcp__rexd-target__glob"
+      return `${prefix}glob`
     case "Grep":
-      return "mcp__rexd-target__grep"
+      return `${prefix}grep`
+    case "LSP":
+      return `${prefix}exec to run language-server tooling on the target`
+    case "Monitor":
+      return `${prefix}exec_start, ${prefix}exec_wait, or PTY tools`
     default:
       return "the rexd-target MCP tools"
   }

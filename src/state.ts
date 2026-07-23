@@ -82,6 +82,22 @@ function normalizeState(value: Partial<RexdState>, resolved: ResolvedStatePath):
   }
 }
 
+function validateStoredState(value: unknown, path: string): asserts value is Partial<RexdState> {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    throw new StateError(`State file is invalid: ${path}: expected an object`)
+  }
+  const state = value as Record<string, unknown>
+  if (!("activeTargetAlias" in state)) {
+    throw new StateError(`State file is invalid: ${path}: missing activeTargetAlias`)
+  }
+  if (
+    state.activeTargetAlias !== null &&
+    (typeof state.activeTargetAlias !== "string" || state.activeTargetAlias.length === 0)
+  ) {
+    throw new StateError(`State file is invalid: ${path}: activeTargetAlias must be a non-empty string or null`)
+  }
+}
+
 export function loadState(options: ResolveStateOptions = {}): { state: RexdState; resolved: ResolvedStatePath } {
   const resolved = resolveStatePath(options)
   if (!existsSync(resolved.statePath)) {
@@ -89,7 +105,8 @@ export function loadState(options: ResolveStateOptions = {}): { state: RexdState
   }
 
   try {
-    const parsed = JSON.parse(readFileSync(resolved.statePath, "utf8")) as Partial<RexdState>
+    const parsed: unknown = JSON.parse(readFileSync(resolved.statePath, "utf8"))
+    validateStoredState(parsed, resolved.statePath)
     return { state: normalizeState(parsed, resolved), resolved }
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err)

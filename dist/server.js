@@ -13900,7 +13900,7 @@ class JSONSchemaGenerator {
               if (val === undefined) {
                 if (this.unrepresentable === "throw") {
                   throw new Error("Literal `undefined` cannot be represented in JSON Schema");
-                } else {}
+                }
               } else if (typeof val === "bigint") {
                 if (this.unrepresentable === "throw") {
                   throw new Error("BigInt literals cannot be represented in JSON Schema");
@@ -20231,6 +20231,18 @@ function normalizeState(value, resolved) {
     stateLocation: resolved.stateLocation
   };
 }
+function validateStoredState(value, path) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    throw new StateError(`State file is invalid: ${path}: expected an object`);
+  }
+  const state = value;
+  if (!("activeTargetAlias" in state)) {
+    throw new StateError(`State file is invalid: ${path}: missing activeTargetAlias`);
+  }
+  if (state.activeTargetAlias !== null && (typeof state.activeTargetAlias !== "string" || state.activeTargetAlias.length === 0)) {
+    throw new StateError(`State file is invalid: ${path}: activeTargetAlias must be a non-empty string or null`);
+  }
+}
 function loadState(options = {}) {
   const resolved = resolveStatePath(options);
   if (!existsSync2(resolved.statePath)) {
@@ -20238,6 +20250,7 @@ function loadState(options = {}) {
   }
   try {
     const parsed = JSON.parse(readFileSync2(resolved.statePath, "utf8"));
+    validateStoredState(parsed, resolved.statePath);
     return { state: normalizeState(parsed, resolved), resolved };
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
@@ -20268,7 +20281,7 @@ function touchState(options = {}) {
 
 // src/version.ts
 var CLIENT_NAME = "claudecode-rexd-target";
-var CLIENT_VERSION = "0.1.3";
+var CLIENT_VERSION = "0.1.4";
 
 // src/connection-manager.ts
 var SESSION_OPEN_TIMEOUT_MS = 20000;

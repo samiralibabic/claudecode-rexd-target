@@ -16,7 +16,7 @@ Claude Code users often need to inspect and operate remote servers without copyi
 - Remote file tools: read, write, list, glob, grep, stat, edit, patch
 - Remote shell tools: exec, long-running exec, stdin, kill
 - Remote PTY tools with buffered output
-- `PreToolUse` hook blocks local `Bash`, `Read`, `Write`, `Edit`, `MultiEdit`, `Glob`, and `Grep` while a target is active
+- `PreToolUse` hook blocks local `Bash`, `PowerShell`, `Read`, `Write`, `Edit`, `MultiEdit`, `NotebookEdit`, `Glob`, `Grep`, `LSP`, and `Monitor` while a target is active
 - Installed runtime uses Node and committed bundled output at `dist/server.js`
 
 ## Security Model
@@ -30,7 +30,7 @@ Claude Code users often need to inspect and operate remote servers without copyi
 
 ## Requirements
 
-- Claude Code with plugin support
+- Claude Code 2.1.139 or newer
 - Node.js at runtime
 - REXD v0.1.5+ installed on remote targets
 - SSH access to configured targets

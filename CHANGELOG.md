@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.1.4 - 2026-07-23
+
+- Block local `NotebookEdit`, `PowerShell`, `LSP`, and `Monitor` tools whenever a REXD target is active, including targets that do not use strict root policy.
+- Use exec-form Node hook configuration and provide remote-tool suggestions for every blocked tool.
+
 ## v0.1.3 - 2026-05-15
 
 - Add coverage confirming `/` workspace roots allow absolute descendants in the Claude Code adapter guard.

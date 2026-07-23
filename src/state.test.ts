@@ -1,8 +1,8 @@
 import { describe, expect, test } from "bun:test"
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, symlinkSync } from "node:fs"
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, symlinkSync, writeFileSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
-import { clearActiveTarget, resolveStatePath, setActiveTarget } from "./state"
+import { clearActiveTarget, loadState, resolveStatePath, setActiveTarget } from "./state"
 
 describe("state", () => {
   test("uses repo-local state when .claude exists", () => {
@@ -42,5 +42,15 @@ describe("state", () => {
     expect(parsed.activeTargetAlias).toBeNull()
     expect(parsed.projectKey).toBe(active.state.projectKey)
     expect(parsed.stateLocation).toBe("repo-local")
+  })
+
+  test("rejects structurally invalid persisted state", () => {
+    const project = mkdtempSync(join(tmpdir(), "rexd-project-"))
+    mkdirSync(join(project, ".claude"))
+    const options = { env: { CLAUDE_REXD_PROJECT_DIR: project } as NodeJS.ProcessEnv }
+    const resolved = resolveStatePath(options)
+    writeFileSync(resolved.statePath, JSON.stringify({ activeTargetAlias: 123 }))
+
+    expect(() => loadState(options)).toThrow("activeTargetAlias must be a non-empty string or null")
   })
 })

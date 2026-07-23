@@ -1,7 +1,7 @@
 {
   "name": "claudecode-rexd-target",
   "description": "Use REXD targets from Claude Code over SSH stdio",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "author": {
     "name": "Samir Alibabic"
   },

@@ -51,4 +51,4 @@ Then use:
 /target clear
 ```
 
-With a target active, local `Bash`, `Read`, `Write`, `Edit`, `MultiEdit`, `Glob`, and `Grep` should be denied by the hook.
+With a target active, local `Bash`, `PowerShell`, `Read`, `Write`, `Edit`, `MultiEdit`, `NotebookEdit`, `Glob`, `Grep`, `LSP`, and `Monitor` should be denied by the hook.

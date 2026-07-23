@@ -7,11 +7,11 @@ The plugin provides:
 - A bundled MCP server named `rexd-target`
 - Remote filesystem, search, shell, and PTY tools backed by `rexd --stdio`
 - A namespaced Claude Code command for target switching
-- A `PreToolUse` hook that blocks local filesystem/search/shell built-ins while a target is active
+- A `PreToolUse` hook that blocks local tools while a target is active
 
 ## Requirements
 
-- Claude Code with plugin support
+- Claude Code 2.1.139 or newer (required for exec-form plugin hooks)
 - Node.js available in `PATH` for the installed MCP server and hook scripts
 - Bun for local development, tests, and building from source
 - SSH access to the remote target
@@ -179,19 +179,20 @@ Available MCP tools:
 
 ## Remote-Only Enforcement
 
-When a target is active, the hook in `hooks/hooks.json` denies local Claude Code built-ins:
+When a target is active, the hook in `hooks/hooks.json` denies these local Claude Code tools:
 
 ```text
-Bash, Read, Write, Edit, MultiEdit, Glob, Grep
+Bash, PowerShell, Read, Write, Edit, MultiEdit, NotebookEdit, Glob, Grep, LSP, Monitor
 ```
 
 Example denial:
 
 ```text
-Local Read blocked because REXD target "prod" is active. Use mcp__rexd-target__read_file instead.
+Local Read blocked because REXD target "prod" is active. Use mcp__plugin_claudecode-rexd-target_rexd-target__read_file instead.
 ```
 
 Run `target_clear` to disable the target and allow local built-ins again.
+This applies regardless of the target root-policy mode, including non-strict modes.
 
 ## State
 

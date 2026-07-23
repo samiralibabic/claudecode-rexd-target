@@ -16,8 +16,8 @@ Supported commands:
 
 Rules:
 
-- `list` calls `mcp__rexd-target__target_list`.
-- `use <alias>` calls `mcp__rexd-target__target_use`.
-- `status` calls `mcp__rexd-target__target_status`.
-- `clear` calls `mcp__rexd-target__target_clear`.
+- `list` calls `mcp__plugin_claudecode-rexd-target_rexd-target__target_list`.
+- `use <alias>` calls `mcp__plugin_claudecode-rexd-target_rexd-target__target_use`.
+- `status` calls `mcp__plugin_claudecode-rexd-target_rexd-target__target_status`.
+- `clear` calls `mcp__plugin_claudecode-rexd-target_rexd-target__target_clear`.
 - After a target is active, use only `rexd-target` MCP tools for filesystem, search, shell, and PTY work.
